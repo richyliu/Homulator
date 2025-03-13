@@ -54,7 +54,7 @@ public:
     level_id = level;
     batch_id = batch;
     data_address = data;
-    depsInsList.reserve(2);
+    depsInsList.resize(4);
   };
 
   Instruction(std::string name, ins_ops ops_, uint32_t level, uint32_t batch,
@@ -64,7 +64,7 @@ public:
     level_id = level;
     batch_id = batch;
     data_address = data;
-    depsInsList.reserve(2);
+    depsInsList.resize(4);
   };
 
   Instruction(){};
@@ -82,7 +82,7 @@ public:
     operandReadyList.push_back(false);
     operandFormatList.push_back(false);
 
-    depsInsList.reserve(2);
+    depsInsList.resize(4);
   };
 
   Instruction(std::string name, ins_ops ops_, uint32_t levelId,
@@ -102,7 +102,7 @@ public:
     operandFormatList.insert(operandFormatList.end(),
                              {false, false, false, false});
 
-    depsInsList.reserve(2);
+    depsInsList.resize(4);
   };
 
   Instruction(std::string name, ins_ops ops_, uint32_t levelId,
@@ -118,7 +118,7 @@ public:
     OutputOperand = opOutAddress;
     operandReadyList.insert(operandReadyList.end(), {false, false});
     operandFormatList.insert(operandFormatList.end(), {false, false});
-    depsInsList.reserve(2);
+    depsInsList.resize(4);
   };
 
   // void SetOpName(std::string name) { OpName = name; };
