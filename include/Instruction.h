@@ -155,7 +155,12 @@ public:
 
   bool isStateOperandReady(uint32_t index) { return operandReadyList[index]; };
 
-  AddrType getOperand(uint32_t index) const { return operandList[index]; };
+  AddrType getOperand(uint32_t index) const {
+    if (index >= operandList.size()) {
+      return 0;
+    }
+    return operandList[index];
+  };
 
   AddrType getOperandOut() const { return OutputOperand; }
 

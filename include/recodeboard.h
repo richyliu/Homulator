@@ -31,12 +31,12 @@ public:
   bool check(const std::vector<Instruction *> &insg) const {
     for (const auto &ins : insg) {
       AddrType op1 = ins->getOperand(1);
-      if (board.find(op1) != board.end()) {
+      if (op1 != 0 && board.find(op1) != board.end()) {
         return false;
       }
 
       AddrType op2 = ins->getOperand(2);
-      if (board.find(op2) != board.end()) {
+      if (op2 != 0 && board.find(op2) != board.end()) {
         return false;
       }
     }
