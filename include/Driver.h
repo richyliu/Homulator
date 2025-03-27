@@ -291,11 +291,11 @@ public:
       // Generic function to issue instructions and update FIFO
       auto issueInstructionAndUpdateFIFO = [this, c,
                                             arch](const std::string &type) {
-        while (!sentInsFIFO[c][type].empty()) {
-          arch->issueIns(c, type, sentInsFIFO[c][type].front());
-          totalIns += sentInsFIFO[c][type].front().size();
-          sentInsFIFO[c][type].erase(sentInsFIFO[c][type].begin());
+        for (auto insg : sentInsFIFO[c][type]) {
+          arch->issueIns(c, type, insg);
+          totalIns += insg.size();
         }
+        sentInsFIFO[c][type].clear();
       };
 
       // Issue instructions for different components
@@ -307,16 +307,15 @@ public:
       auto issueBCONVorHPIP = [this, c, arch](const std::string &type,
                                               uint32_t height, uint32_t width,
                                               bool flag) {
-        while (!sentInsFIFO[c][type].empty()) {
-          for (uint32_t h = 0; h < height; h++) {
-            for (uint32_t w = 0; w < width; w++) {
-              auto insg = sentInsFIFO[c][type][0];
+        for (uint32_t h = 0; h < height; h++) {
+          for (uint32_t w = 0; w < width; w++) {
+            for (auto insg : sentInsFIFO[c][type]) {
               arch->issueIns(c, h, w, insg, flag);
               totalIns += insg.size();
             }
           }
-          sentInsFIFO[c][type].erase(sentInsFIFO[c][type].begin());
         }
+        sentInsFIFO[c][type].clear();
       };
 
       issueBCONVorHPIP("BCONV", bconvh, bconvw, false);
