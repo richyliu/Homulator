@@ -3,10 +3,11 @@
 #include "Staistics.h"
 
 bool mem::checkData(AddrType addr, bool ntt) {
-  auto it = chipMemCache.find(addr);
-  if (it != chipMemCache.end()) {
-    MemLine *line = chipMem[it->second];
-    if (!line->getValid() && line->getAddr() == addr) {
+  auto it = chipMem.find(addr);
+  if (it != chipMem.end()) {
+    MemLine *line = it->second;
+    assert(line->getAddr() == addr);
+    if (!line->getValid()) {
 
       if (arch->MemLineStatic()) {
         auto cycle = arch->getCycle();

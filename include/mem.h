@@ -264,28 +264,19 @@ private:
   uint32_t lineCount;
   uint32_t id;
   std::string name;
-  std::vector<MemLine *> chipMem;
-  std::map<AddrType, size_t> chipMemCache;
+  std::map<AddrType, MemLine *> chipMem;
 
   DataMap *globalDataMap;
 
   Arch *arch;
 
-  std::vector<uint32_t> usedLineId;
-  std::vector<uint32_t> freeLineId;
-
 public:
-  mem(uint32_t size, Arch *_arch) : lineCount(size), arch(_arch) {
-    for (uint32_t i = 0; i < lineCount; ++i) {
-      chipMem.push_back(new MemLine());
-      freeLineId.push_back(i); // Store the free Id.
-    }
-  };
+  mem(uint32_t size, Arch *_arch) : lineCount(size), chipMem(), arch(_arch) {};
 
   // Destructor to prevent memory leaks
   ~mem() {
     for (auto &line : chipMem) {
-      delete line;
+      delete line.second;
     }
   }
 
@@ -311,7 +302,8 @@ public:
   void setGlobalDataMap(DataMap *map) { globalDataMap = map; }
 
   void updateLines() {
-    for (auto &line : chipMem) {
+    for (auto &kv : chipMem) {
+      auto line = kv.second;
       auto addr = line->getAddr();
       if (!globalDataMap->isInInputMap(
               addr)) { // Mem 中的非输入的line需要被output
@@ -335,24 +327,18 @@ public:
       return true;
     }
 
-    if (!freeLineId.empty()) {
-      auto id = freeLineId[0];
-      auto line = chipMem[id];
+    if (chipMem.size() < lineCount) {
+      MemLine *line = new MemLine();
 
-      if (line->getValid() || line->getTimes() == 0) {
-        line->setAddr(addr);
-        line->setValid(false);
-        line->setTimes(times);
-        line->setUnit(fromUnits);
-        line->setNTT(ntt);
+      line->setAddr(addr);
+      line->setValid(false);
+      line->setTimes(times);
+      line->setUnit(fromUnits);
+      line->setNTT(ntt);
 
-        usedLineId.push_back(id);
-        freeLineId.erase(freeLineId.begin());
+      chipMem[addr] = line;
 
-        chipMemCache[addr] = id;
-
-        return true;
-      }
+      return true;
     }
 
     return false;
@@ -360,31 +346,22 @@ public:
 
   void processAddr(AddrType addr) { // 检查目的addr
 
-    for (auto it = usedLineId.begin(); it != usedLineId.end();) {
-      auto line = chipMem[*it];
-      if (line->getAddr() == addr) {
-        if (line->getTimes() > 0) {
-          line->decreaseTimes();
-        } else {
-          line->setValid(true);
-          line->setTimes(0);
-          freeLineId.push_back(*it); // Store the value before erasing
-          it = usedLineId.erase(it); // Erase the element and update iterator
-          // remove from cache
-          if (chipMemCache.erase(addr) != 1) {
-            throw std::runtime_error("Error: Address not found in cache");
-          }
-          continue; // Continue to next iteration without incrementing iterator
-        }
+    auto it = chipMem.find(addr);
+    if (it != chipMem.end()) {
+      MemLine *line = it->second;
+      assert(line->getAddr() == addr);
+      if (line->getTimes() > 0) {
+        line->decreaseTimes();
+      } else {
+        delete line;
+        chipMem.erase(it);
       }
-      ++it; // Increment iterator
     }
   };
 
   void checkingTimes() {
-    // for (auto &line : chipMem) {
-    for (auto it = usedLineId.begin(); it != usedLineId.end(); ++it) {
-      auto line = chipMem[*it];
+    for (auto &kv : chipMem) {
+      MemLine *line = kv.second;
       if (line->getTimes() != globalDataMap->getInputTimes(line->getAddr())) {
         std::cout << " " << line->getAddr() << " times " << line->getTimes()
                   << " " << globalDataMap->getInputTimes(line->getAddr())
@@ -396,9 +373,8 @@ public:
 
   void shownState() {
     std::cout << "\n\n";
-    // for (auto &line : chipMem) {
-    for (auto it = usedLineId.begin(); it != usedLineId.end(); ++it) {
-      auto line = chipMem[*it];
+    for (auto &kv : chipMem) {
+      MemLine *line = kv.second;
       if (line->getTimes() != 0) {
         std::cout << " " << line->getAddr() << " times " << line->getTimes()
                   << " " << globalDataMap->getInputTimes(line->getAddr())
@@ -409,69 +385,29 @@ public:
 
   // Validation method
   void validAddr(AddrType addr, bool ntt) {
-
-    // for (auto &line : chipMem) {
-    // for (auto it = usedLineId.begin(); it != usedLineId.end();) {
-    //   auto line = chipMem[*it];
-    //   if (line->getTimes() > 0 &&
-    //       line->getAddr() == addr) { //! line->getValid() &&
-    //     // This version not check the ntt state
-    //     // if (ntt != line->getNTTState()) {
-    //     //   throw std::runtime_error("Incorrect format representation");
-    //     // }
-
-    //     line->decreaseTimes();
-    //     if (line->getTimes() == 0) {
-    //       line->setValid(true);
-    //       line->setTimes(0);
-    //       freeLineId.push_back(*it); // Store the value before erasing
-    //       it = usedLineId.erase(it); // Erase the element and update iterator
-    //       continue; // Continue to next iteration without incrementing
-    //       iterator
-    //     }
-    //     return;
-    //   }
-    // }
-
-    for (auto it = usedLineId.begin(); it != usedLineId.end();) {
-      auto line = chipMem[*it];
-      if (line->getTimes() > 0 && line->getAddr() == addr) {
-        // Check if additional state needs verification
-        // if (ntt != line->getNTTState()) {
-        //     throw std::runtime_error("Incorrect format representation");
-        // }
-
+    auto it = chipMem.find(addr);
+    if (it != chipMem.end()) {
+      MemLine *line = it->second;
+      assert(line->getAddr() == addr);
+      if (line->getTimes() > 0) {
         line->decreaseTimes();
         if (line->getTimes() == 0) {
-          line->setValid(true);
-          line->setTimes(0);
-          freeLineId.push_back(*it);
-          it = usedLineId.erase(it);
-          // remove from cache
-          if (chipMemCache.erase(addr) != 1) {
-            throw std::runtime_error("Error: Address not found in cache");
-          }
-          continue;
+          delete line;
+          chipMem.erase(it);
         }
-        return; // Assuming only one match is processed at a time
       }
-      ++it;
     }
-
-    // throw std::runtime_error("Address not found");
   };
 
   bool checkData(AddrType addr, bool ntt);
 
   bool insertCheckData(AddrType addr, bool ntt) {
-
-    for (auto id : usedLineId) {
-      auto line = chipMem[id];
-      if (!line->getValid() && line->getAddr() == addr) {
-        return true;
-      }
+    auto it = chipMem.find(addr);
+    if (it != chipMem.end()) {
+      MemLine *line = it->second;
+      assert(line->getAddr() == addr);
+      return !line->getValid();
     }
-
     return false;
   };
 };
