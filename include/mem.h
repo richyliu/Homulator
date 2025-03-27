@@ -183,8 +183,9 @@ public:
   bool getExecuted() { return executed; };
 
   // Sets the input for the port
-  bool setInput(HBMEntry *addres) {
+  bool setInput(const std::vector<AddrType> &addrs) {
     if (!inputSignal) {
+      HBMEntry *addres = new HBMEntry(addrs);
       inPointer = addres;
       // std::cout<<addres->getData();
       // addres->show();
@@ -649,8 +650,8 @@ public:
 
   // Send data to on-chip memory from Dram
   // This function expose to the instruction generator
-  bool sentToOnChipMem(std::vector<AddrType> &addrs) {
-    return fetcherFromDram->setInput(new HBMEntry(addrs));
+  bool sentToOnChipMem(const std::vector<AddrType> &addrs) {
+    return fetcherFromDram->setInput(addrs);
   };
 
   uint32_t getHbmBandwidth() { return entryCountForFifoDram; };

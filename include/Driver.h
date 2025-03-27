@@ -6,6 +6,8 @@
 #include "Instruction.h"
 #include "mem.h"
 
+#include <queue>
+
 typedef std::vector<Instruction *> INSGROUP;
 
 class Driver {
@@ -20,7 +22,7 @@ private:
   std::map<AddrType, uint32_t> dispathTimes;
 
   // [cluser, list, entry]
-  std::vector<std::vector<std::vector<AddrType>>> dispatchedAddrHolder;
+  std::vector<std::queue<std::vector<AddrType>>> dispatchedAddrHolder;
 
   std::vector<std::vector<AddrType>>
       dataHolder; // [cluster, entry] each entry is equal ==
@@ -106,7 +108,7 @@ public:
 
   void extractInputAddrFromInstruction(
       INSGROUP insg, uint32_t clusterId,
-      std::vector<std::vector<AddrType>> &dispatchHolder) {
+      std::queue<std::vector<AddrType>> &dispatchHolder) {
     for (auto &ins : insg) {
       auto count = ins->getinputCount();
       for (uint32_t i = 0; i < count; i++) {
@@ -138,7 +140,7 @@ public:
           }
 
           if (dataHolder[clusterId].size() == entryCountForFifoDram) {
-            dispatchHolder.push_back(dataHolder[clusterId]);
+            dispatchHolder.push(dataHolder[clusterId]);
             // std::cout<<"INSERT->"<<dataHolder[clusterId].size()<<"
             // "<<dataHolder[clusterId][0]<<"\n";
             dataHolder[clusterId].clear();
@@ -330,10 +332,9 @@ public:
       auto &addrHolder = dispatchedAddrHolder[c];
       if (addrHolder.empty())
         continue;
-      auto it = addrHolder.begin();
-      if (!it->empty() && memC[c]->sentToOnChipMem(*it)) {
-        // std::cout<<"===================\n\n\n";
-        it = addrHolder.erase(it);
+      const auto &front = addrHolder.front();
+      if (!front.empty() && memC[c]->sentToOnChipMem(front)) {
+        addrHolder.pop();
       }
     }
   }
