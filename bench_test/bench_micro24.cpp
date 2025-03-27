@@ -27,24 +27,24 @@ int main(int argc, char *argv[]) {
     Arch* arch = new Arch(config);
     
     if (ops == "hmult") {
-        HMULT* hmult = new HMULT("test_hmult", maxlevel, currentlevel, alpha, config, arch);
-        hmult->simulate();
+        HMULT hmult = HMULT("test_hmult", maxlevel, currentlevel, alpha, config, arch);
+        hmult.simulate();
     }
     else if (ops == "hrotate") {
-        HROTATE* hrotate = new HROTATE("test_hrotate", maxlevel, currentlevel, alpha, config, arch);
-        hrotate->simulate();
+        HROTATE hrotate = HROTATE("test_hrotate", maxlevel, currentlevel, alpha, config, arch);
+        hrotate.simulate();
     }
     else if (ops == "hadd") {
-        HADD* hadd = new HADD("test_hadd", maxlevel, currentlevel, alpha, config, arch);
-        hadd->simulate();
+        HADD hadd = HADD("test_hadd", maxlevel, currentlevel, alpha, config, arch);
+        hadd.simulate();
     }
     else if (ops == "pmult") {
-        PMULT* pmult = new PMULT("test_pmult", maxlevel, currentlevel, alpha, config, arch);
-        pmult->simulate();
+        PMULT pmult = PMULT("test_pmult", maxlevel, currentlevel, alpha, config, arch);
+        pmult.simulate();
     }
     else if (ops == "padd") {
-        PADD* padd = new PADD("test_ADD", maxlevel, currentlevel, alpha, config, arch);
-        padd->simulate();
+        PADD padd = PADD("test_ADD", maxlevel, currentlevel, alpha, config, arch);
+        padd.simulate();
     }
     else {
         std::cout << "Error operation requirement, please double confirm!\n";

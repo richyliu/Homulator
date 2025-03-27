@@ -1,19 +1,19 @@
 TARGET = ForgeHomulator.run
 CXX = clang++
-LD = lld
 SRCS  = $(shell find ./src ./bench_test -type f -name *.cpp)
 HEADS = $(shell find ./include -type f -name *.h)
 OBJS = $(SRCS:.cpp=.o)
 DEPS = Makefile.depend
 
 INCLUDES = -I./include/
-CXXFLAGS = -std=c++17 -g -Wall $(INCLUDES)
-LDFLAGS = -lm
+EXTRAFLAGS = -O3 -fsanitize=address
+CXXFLAGS = -std=c++17 -g -Wall $(INCLUDES) $(EXTRAFLAGS)
+LDFLAGS = -lm $(EXTRAFLAGS)
 
 all: $(TARGET)
 
 $(TARGET): $(OBJS) $(HEADS)
-	$(CXX) $(LDFLAGS) -fuse-ld=$(LD) -o $@ $(OBJS)
+	$(CXX) $(LDFLAGS) -o $@ $(OBJS)
 
 %.o: %.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@

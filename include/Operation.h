@@ -201,7 +201,6 @@ public:
         uint32_t alpha, Config *cfg, Arch *_arch);
 
   bool simulate();
-  ~HMULT();
 };
 
 class HADD {
@@ -230,7 +229,6 @@ public:
        uint32_t alpha, Config *cfg, Arch *_arch);
 
   bool simulate();
-  ~HADD();
 };
 
 class HROTATE {
@@ -259,7 +257,6 @@ public:
           uint32_t alpha, Config *cfg, Arch *_arch);
 
   bool simulate();
-  ~HROTATE();
 };
 
 class PMULT {
@@ -288,7 +285,6 @@ public:
         uint32_t alpha, Config *cfg, Arch *_arch);
 
   bool simulate();
-  ~PMULT();
 };
 
 class PADD {
@@ -317,6 +313,5 @@ public:
        uint32_t alpha, Config *cfg, Arch *_arch);
 
   bool simulate();
-  ~PADD();
 };
 #endif

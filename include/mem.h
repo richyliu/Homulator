@@ -206,6 +206,8 @@ public:
       throw std::runtime_error("Output pointer is null");
     }
     std::vector<AddrType> temp = outPointer->getData();
+    delete outPointer;
+    outPointer = nullptr;
 
     return temp;
   };
