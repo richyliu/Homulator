@@ -263,7 +263,7 @@ private:
 
   std::string Name;
 
-  uint32_t stallCycles;
+  // uint32_t stallCycles;
 
   unsigned long long exeCycles;
 

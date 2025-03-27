@@ -130,7 +130,7 @@ public:
 class HbmPort {
 private:
   uint32_t delay;
-  uint32_t entryCount;
+  // uint32_t entryCount;
   std::vector<HBMEntry *> pipeline; // [pipelineDepth, bandwidth]
 
   uint32_t used_pipeline; // Consider renaming to usedPipeline for consistency
@@ -146,7 +146,7 @@ private:
 public:
   // Constructor for HbmPort
   HbmPort(uint32_t pipeline_delay, uint32_t transEntryCount)
-      : delay(pipeline_delay), entryCount(transEntryCount), used_pipeline(0),
+      : delay(pipeline_delay), /*entryCount(transEntryCount),*/ used_pipeline(0),
         outSignal(false), inputSignal(false) {
     pipeline.resize(delay);
     outPointer = nullptr;
@@ -221,7 +221,7 @@ private:
   bool unitsOut;      // Indicates if the data comes from units
   bool format;        // true for NTT, false otherwise
 
-  uint32_t accessTimes; // The total access times from the chip
+  // uint32_t accessTimes; // The total access times from the chip
   std::vector<unsigned long long> accessTime;
 
 public:
@@ -483,7 +483,7 @@ private:
   uint32_t memSize;
   uint32_t memLineCount;
 
-  uint32_t fetchDelay;
+  // uint32_t fetchDelay;
 
   // addr->times
   std::vector<std::vector<std::pair<AddrType, uint32_t>>> addrFromDram;
@@ -515,6 +515,8 @@ private:
 public:
   // Constructor
   MemController(Config *cfg, Arch *_arch) : arch(_arch) {
+    (void)arch; // suppress unused warning
+
     memCount = cfg->getValue("memCount");
     memSize = cfg->getValue("memSize");
     batchSize = cfg->getValue("batchSize");

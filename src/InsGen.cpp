@@ -273,9 +273,6 @@ InsGen::GenBCONV(uint32_t levelId, uint32_t InLevel, uint32_t offset,
 
   std::vector<std::vector<Instruction *>> insList; // [batch, insgroup]
 
-  auto &dataPollRef = *DataPool;
-  auto &dataInsMapRef = *DataInsMap;
-
   for (uint32_t b = 0; b < batchCount; b++) {
     std::vector<Instruction *> insGroup;
 
@@ -323,9 +320,6 @@ std::vector<std::vector<Instruction *>> InsGen::GenBCONV(
   name += "BCONV";
 
   std::vector<std::vector<Instruction *>> insList; // [batch, insgroup]
-
-  auto &dataPollRef = *DataPool;
-  auto &dataInsMapRef = *DataInsMap;
 
   for (uint32_t b = 0; b < batchCount; b++) {
     std::vector<Instruction *> insGroup;
@@ -403,4 +397,6 @@ InsGen::GenHPIP(uint32_t levelId, std::string name,
 
     insList.push_back(ins);
   }
+
+  return insList;
 }
