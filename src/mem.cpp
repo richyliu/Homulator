@@ -43,7 +43,7 @@ bool MemController::checkMemReady(std::vector<Instruction *> insg,
           continue;
         }
 
-        // auto flag = checkOtherMem(ins->getOperand(i), ins->getOperandFormat(i));
+        checkOtherMem(ins->getOperand(i), ins->getOperandFormat(i));
 
         stat->increaseStat(stall_key);
 
