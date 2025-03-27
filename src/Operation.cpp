@@ -253,7 +253,7 @@ void KeySwitch::ModUpNTT(uint32_t beta) {
 
         // Handle the case where l is out of range
         // For example, set inputData to a default value or handle the error
-        throw std::runtime_error("l is out of range");
+        inputData = 0;
       }
     } else { // Use the output from Bconv
       // Construct a different key for the map
@@ -276,7 +276,7 @@ void KeySwitch::ModUpNTT(uint32_t beta) {
       } else {
         // Handle the case where l is out of range
         // For example, set inputData to a default value or handle the error
-        throw std::runtime_error("l is out of range");
+        inputData = 0;
       }
     }
 
