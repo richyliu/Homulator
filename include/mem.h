@@ -264,6 +264,7 @@ private:
   uint32_t id;
   std::string name;
   std::vector<MemLine *> chipMem;
+  std::map<AddrType, size_t> chipMemCache;
 
   DataMap *globalDataMap;
 
@@ -347,6 +348,8 @@ public:
         usedLineId.push_back(id);
         freeLineId.erase(freeLineId.begin());
 
+        chipMemCache[addr] = id;
+
         return true;
       }
     }
@@ -366,6 +369,10 @@ public:
           line->setTimes(0);
           freeLineId.push_back(*it); // Store the value before erasing
           it = usedLineId.erase(it); // Erase the element and update iterator
+          // remove from cache
+          if (chipMemCache.erase(addr) != 1) {
+            throw std::runtime_error("Error: Address not found in cache");
+          }
           continue; // Continue to next iteration without incrementing iterator
         }
       }
@@ -439,6 +446,10 @@ public:
           line->setTimes(0);
           freeLineId.push_back(*it);
           it = usedLineId.erase(it);
+          // remove from cache
+          if (chipMemCache.erase(addr) != 1) {
+            throw std::runtime_error("Error: Address not found in cache");
+          }
           continue;
         }
         return; // Assuming only one match is processed at a time

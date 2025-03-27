@@ -3,9 +3,9 @@
 #include "Staistics.h"
 
 bool mem::checkData(AddrType addr, bool ntt) {
-  // for (auto &line : chipMem) {
-  for (auto id : usedLineId) {
-    auto line = chipMem[id];
+  auto it = chipMemCache.find(addr);
+  if (it != chipMemCache.end()) {
+    MemLine *line = chipMem[it->second];
     if (!line->getValid() && line->getAddr() == addr) {
 
       if (arch->MemLineStatic()) {
