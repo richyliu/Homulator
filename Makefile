@@ -6,7 +6,7 @@ OBJS = $(SRCS:.cpp=.o)
 DEPS = Makefile.depend
 
 INCLUDES = -I./include/
-EXTRAFLAGS = -O3 -fsanitize=address
+EXTRAFLAGS = -O3
 CXXFLAGS = -std=c++17 -g -Wall $(INCLUDES) $(EXTRAFLAGS)
 LDFLAGS = -lm $(EXTRAFLAGS)
 

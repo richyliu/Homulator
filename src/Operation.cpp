@@ -1052,7 +1052,7 @@ bool HMULT::simulate() {
     arch->update();
 
     cycle = arch->getCycle();
-    if (cycle % 2000 == 0) {
+    if (cycle % 5000 == 0) {
 
       auto exeins = arch->getcompletedIns() - exeInsCycle;
 
@@ -1205,7 +1205,7 @@ bool HADD::simulate() {
     arch->update();
 
     cycle = arch->getCycle();
-    if (cycle % 2000 == 0) {
+    if (cycle % 5000 == 0) {
 
       auto exeins = arch->getcompletedIns() - exeInsCycle;
 
@@ -1387,7 +1387,7 @@ bool HROTATE::simulate() {
     arch->update();
 
     cycle = arch->getCycle();
-    if (cycle % 2000 == 0) {
+    if (cycle % 5000 == 0) {
 
       auto exeins = arch->getcompletedIns() - exeInsCycle;
 
@@ -1552,7 +1552,7 @@ bool PMULT::simulate() {
     arch->update();
 
     cycle = arch->getCycle();
-    if (cycle % 2000 == 0) {
+    if (cycle % 5000 == 0) {
 
       auto exeins = arch->getcompletedIns() - exeInsCycle;
 
@@ -1709,7 +1709,7 @@ bool PADD::simulate() {
     arch->update();
 
     cycle = arch->getCycle();
-    if (cycle % 2000 == 0) {
+    if (cycle % 5000 == 0) {
 
       auto exeins = arch->getcompletedIns() - exeInsCycle;
 
